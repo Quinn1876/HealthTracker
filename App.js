@@ -6,15 +6,15 @@
  * @flow strict-local
  */
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationContainer} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-import {Home} from './components/home';
-import {Profile} from './components/profile';
-import {SymptomTrackerScreen} from './components/symptom-tracker/symptom-tracker.screen';
-import {NewSymptomScreen} from './components/symptom-tracker/new-symptom.screen';
+import { Home } from './components/home';
+import { Profile } from './components/profile';
+import { SymptomTrackerScreen } from './components/symptom-tracker/symptom-tracker.screen';
+import { NewSymptomScreen } from './components/symptom-tracker/new-symptom.screen';
 
 const Stack = createStackNavigator();
 
@@ -37,13 +37,13 @@ const App = () => {
         <Stack.Screen
           name="Home"
           component={Home}
-          options={{title: 'My Home'}}
+          options={{ title: 'My Home' }}
         />
         <Stack.Screen
           name="Profile"
           component={Profile}
-          initialParams={{name: 'Quinn'}}
-          options={({route}) => ({
+          initialParams={{ name: 'Quinn' }}
+          options={({ route }) => ({
             title: `${route.params.name}'s Profile`,
           })}
         />

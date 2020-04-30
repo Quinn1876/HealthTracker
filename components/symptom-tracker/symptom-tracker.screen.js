@@ -1,11 +1,40 @@
 import React from 'react';
-import {View, Text, FlatList, Button, StyleSheet} from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
 
-import {HeaderText} from '../header-text';
-import {SymptomListItem} from './symptom-list-item';
-import {FloatingCircleButton} from '../floating-circle-button';
+import { HeaderText } from '../header-text';
+import { SymptomListItem } from './symptom-list-item';
+import { FloatingCircleButton } from '../floating-circle-button';
 
-export const SymptomTrackerScreen = ({navigation, route}) => {
+/**
+ * State Controler
+ */
+const initialState = {
+  symptoms: [],
+};
+
+/**
+ * Actions
+ */
+const ADD_SYMPTOM = 'add_symptom';
+export const SymptomActions = { ADD_SYMPTOM };
+
+const symptomReducer = (state, action) => {
+  switch (action.type) {
+    case ADD_SYMPTOM:
+      action.symptom.id = state.symptoms.length;
+      action.symptom.dateCreated = new Date();
+      return { ...state, symptoms: [...state.symptoms, action.symptom] };
+
+    default:
+      break;
+  }
+};
+
+/**
+ * SymptomTrackerScreen
+ *  - Displays the Current Symptoms as Recorded By the User
+ */
+export const SymptomTrackerScreen = ({ navigation, route }) => {
   const [symptomList, dispatchSymptomList] = React.useReducer(
     symptomReducer,
     initialState,
@@ -19,7 +48,9 @@ export const SymptomTrackerScreen = ({navigation, route}) => {
     //     dateTime: new Date(),
     //   },
     // });
-    navigation.navigate('NewSymptomPage', {dispatch: dispatchSymptomList});
+    navigation.navigate('NewSymptomPage', {
+      dispatchSymptom: dispatchSymptomList,
+    });
   };
   return (
     <View style={styles.container}>
@@ -28,7 +59,7 @@ export const SymptomTrackerScreen = ({navigation, route}) => {
       <FlatList
         style={styles.list}
         data={symptomList.symptoms}
-        renderItem={({item: {notes, dateTime}}) => (
+        renderItem={({ item: { notes, dateTime } }) => (
           <SymptomListItem notes={notes} dateTime={dateTime} />
         )}
         keyExtractor={(item) => item.id.toString()}
@@ -37,6 +68,9 @@ export const SymptomTrackerScreen = ({navigation, route}) => {
   );
 };
 
+/**
+ * StyleSheet for the SymptomTrackerScreen
+ */
 const styles = StyleSheet.create({
   container: {
     height: '100%',
@@ -46,21 +80,3 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
 });
-
-const initialState = {
-  symptoms: [],
-};
-
-const symptomReducer = (state, action) => {
-  switch (action.type) {
-    case ADD_SYMPTOM:
-      action.symptom.id = state.symptoms.length;
-      action.symptom.dateCreated = new Date();
-      return {...state, symptoms: [...state.symptoms, action.symptom]};
-
-    default:
-      break;
-  }
-};
-const ADD_SYMPTOM = 'add_symptom';
-export const SymptomActions = {ADD_SYMPTOM};
