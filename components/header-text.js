@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   headerText: {
@@ -9,6 +9,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export const HeaderText = ({children}) => (
+export const HeaderText = ({ children }) => (
   <Text style={styles.headerText}>{children}</Text>
 );

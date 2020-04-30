@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-export const SymptomListItem = ({notes, dateTime}) => (
+export const SymptomListItem = ({ notes, dateTime }) => (
   <View style={styles.container}>
     <View>
       <Text>Notes:</Text>

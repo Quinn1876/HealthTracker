@@ -1,7 +1,7 @@
 import React from 'react';
-import {TouchableHighlight, Text, View, StyleSheet} from 'react-native';
+import { TouchableHighlight, Text, View, StyleSheet } from 'react-native';
 
-export const FloatingCircleButton = ({onPress, children}) => (
+export const FloatingCircleButton = ({ onPress, children }) => (
   <TouchableHighlight style={styles.button} onPress={onPress}>
     <Text style={styles.text}>{children}</Text>
   </TouchableHighlight>
