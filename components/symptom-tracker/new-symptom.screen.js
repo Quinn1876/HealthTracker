@@ -36,25 +36,53 @@ export const NewSymptomScreen = ({ navigation, route }) => {
     }
   }, [dispatchSymptom]);
 
-  // State Declarations
-  const [date, setDate] = React.useState(new Date());
-  const [mode, setMode] = React.useState('date');
-  const [show, setShow] = React.useState(false);
+  // DateTimeControl Actions
+  const SHOW_DATE = 'show_date';
+  const SHOW_TIME = 'show_time';
+  const HIDE_DT = 'hide_dt';
+  const SET_DATE = 'set_date';
+  // DateTime Initial State
+  const dateTimeInitialState = {
+    mode: 'date',
+    date: new Date(),
+    show: false,
+  };
+  // DateTime Reducer
+  const dateTimeReducer = (state, action) => {
+    switch (action.type) {
+      case SHOW_DATE:
+        return {
+          ...state,
+          mode: 'date',
+          show: true,
+        };
 
-  // Event Handlers
-  const handleSetDatePress = () => {
-    setMode('date');
-    setShow(true);
+      case SHOW_TIME:
+        return {
+          ...state,
+          mode: 'time',
+          show: true,
+        };
+      case HIDE_DT:
+        return {
+          ...state,
+          show: false,
+        };
+      case SET_DATE:
+        return {
+          ...state,
+          show: Platform.OS === 'ios',
+          date: action.newDate || state.date,
+        };
+      default:
+        break;
+    }
   };
-  const handleSetTimePress = () => {
-    setMode('time');
-    setShow(true);
-  };
-  const handleDateTimeChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-  };
+  // DateTimeControl
+  const [dateTimeControl, dispatchDateTimeControl] = React.useReducer(
+    dateTimeReducer,
+    dateTimeInitialState,
+  );
 
   // JSX VIEW
   return (
@@ -62,19 +90,24 @@ export const NewSymptomScreen = ({ navigation, route }) => {
       <Text>Notes:</Text>
       <TextInput multiline autoFocus />
       <Button
-        onPress={handleSetDatePress}
+        onPress={() => dispatchDateTimeControl({ type: SHOW_DATE })}
         title="Set Date"
         style={styles.dateButton}
       />
-      <Button onPress={handleSetTimePress} title="Set Time" />
-      {show && (
+      <Button
+        onPress={() => dispatchDateTimeControl({ type: SHOW_TIME })}
+        title="Set Time"
+      />
+      {dateTimeControl.show && (
         <DateTimePicker
           timeZoneOffsetInMinutes={0} // IOS Only
-          value={date}
-          mode={mode}
+          value={dateTimeControl.date}
+          mode={dateTimeControl.mode}
           is24Hour={true} // Android Only
           display="default" // Android Only
-          onChange={handleDateTimeChange}
+          onChange={(event, selectedDate) =>
+            dispatchDateTimeControl({ type: SET_DATE, newDate: selectedDate })
+          }
         />
       )}
     </View>

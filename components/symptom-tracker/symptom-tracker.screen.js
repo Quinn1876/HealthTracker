@@ -40,18 +40,12 @@ export const SymptomTrackerScreen = ({ navigation, route }) => {
     initialState,
   );
   const handlePress = () => {
-    // dispatchSymptomList({
-    //   type: ADD_SYMPTOM,
-    //   symptom: {
-    //     notes:
-    //       'These are some very Long Notes to show what will happen with a lot of text',
-    //     dateTime: new Date(),
-    //   },
-    // });
     navigation.navigate('NewSymptomPage', {
       dispatchSymptom: dispatchSymptomList,
     });
   };
+
+  // JSX VEIW
   return (
     <View style={styles.container}>
       <FloatingCircleButton onPress={handlePress}>+</FloatingCircleButton>
