@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import { DateTimeSelector, HeaderText, DropDownInputSelector } from '../';
+
 import { SymptomActions } from './symptom-tracker.screen';
 
 /**
@@ -84,19 +86,40 @@ export const NewSymptomScreen = ({ navigation, route }) => {
     dateTimeInitialState,
   );
 
+  const MOCK_DROP_DOW_LIST = [
+    { text: 'hello' },
+    { text: 'hello1' },
+    { text: 'hello2' },
+    { text: 'hello3' },
+    { text: 'hello4' },
+    { text: 'hello5' },
+    { text: 'hello6' },
+    { text: 'hello7' },
+    { text: 'hello8' },
+    { text: 'hello9' },
+    { text: 'hello10' },
+    { text: 'hello12' },
+    { text: 'hello13' },
+    { text: 'hello14' },
+    { text: 'hello15' },
+    { text: 'hello16' },
+    { text: 'hello17' },
+  ];
+
   // JSX VIEW
   return (
     <View>
-      <Text>Notes:</Text>
-      <TextInput multiline autoFocus />
-      <Button
-        onPress={() => dispatchDateTimeControl({ type: SHOW_DATE })}
-        title="Set Date"
-        style={styles.dateButton}
+      <HeaderText>Notes:</HeaderText>
+      {/* <TextInput multiline autoFocus style={styles.notesInput} /> */}
+      <TextInput multiline style={styles.notesInput} />
+      <DateTimeSelector
+        date={dateTimeControl.date}
+        onDatePress={() => dispatchDateTimeControl({ type: SHOW_DATE })}
+        onTimePress={() => dispatchDateTimeControl({ type: SHOW_TIME })}
       />
-      <Button
-        onPress={() => dispatchDateTimeControl({ type: SHOW_TIME })}
-        title="Set Time"
+      <DropDownInputSelector
+        listItems={MOCK_DROP_DOW_LIST}
+        itemSelectedCallback={() => true}
       />
       {dateTimeControl.show && (
         <DateTimePicker
@@ -119,5 +142,12 @@ const styles = StyleSheet.create({
   container: {},
   dateButton: {
     marginBottom: 100,
+  },
+  notesInput: {
+    borderWidth: 1,
+    borderColor: 'black',
+    margin: 8,
+    borderRadius: 3,
+    backgroundColor: 'white',
   },
 });
