@@ -18,6 +18,15 @@ const initialState = {
 const ADD_SYMPTOM = 'add_symptom';
 export const SymptomActions = { ADD_SYMPTOM };
 
+/**
+ * symptom: {
+ *  notes,
+ *  dateTime,
+ *  medication
+ * }
+ *
+ */
+
 const symptomReducer = (state, action) => {
   switch (action.type) {
     case ADD_SYMPTOM:
@@ -53,8 +62,12 @@ export const SymptomTrackerScreen = ({ navigation, route }) => {
       <FlatList
         style={styles.list}
         data={symptomList.symptoms}
-        renderItem={({ item: { notes, dateTime } }) => (
-          <SymptomListItem notes={notes} dateTime={dateTime} />
+        renderItem={({ item: { notes, dateTime, medication } }) => (
+          <SymptomListItem
+            notes={notes}
+            dateTime={dateTime}
+            medication={medication}
+          />
         )}
         keyExtractor={(item) => item.id.toString()}
       />

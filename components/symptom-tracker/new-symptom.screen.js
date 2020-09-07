@@ -1,14 +1,17 @@
 import React from 'react';
 import {
   View,
-  Text,
-  Button,
+  TouchableOpacity,
   StyleSheet,
   YellowBox,
   Platform,
   TextInput,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {
+  ASgetMedicationList,
+  ASsetMedicationList,
+} from '../../utilities/async-store';
 
 import { DateTimeSelector, HeaderText, DropDownInputSelector } from '../';
 
@@ -86,41 +89,76 @@ export const NewSymptomScreen = ({ navigation, route }) => {
     dateTimeInitialState,
   );
 
-  const MOCK_DROP_DOW_LIST = [
-    { text: 'hello' },
-    { text: 'hello1' },
-    { text: 'hello2' },
-    { text: 'hello3' },
-    { text: 'hello4' },
-    { text: 'hello5' },
-    { text: 'hello6' },
-    { text: 'hello7' },
-    { text: 'hello8' },
-    { text: 'hello9' },
-    { text: 'hello10' },
-    { text: 'hello12' },
-    { text: 'hello13' },
-    { text: 'hello14' },
-    { text: 'hello15' },
-    { text: 'hello16' },
-    { text: 'hello17' },
-  ];
+  // DropDown States
+  const [medicationDropdownList, setMedicationDropDownList] = React.useState(
+    [],
+  );
+
+  // Load from AS on mount
+  React.useEffect(() => {
+    ASgetMedicationList().then((list) =>
+      setMedicationDropDownList((old) => list || old),
+    );
+  }, []);
+
+  const [selectedMedication, setSelectedMedication] = React.useState(null);
+
+  // Notes States
+  const [notes, updateNotes] = React.useState('');
+
+  // handleSubmit
+  // - Sends the new note back to the list
+  // - stores the list of medications
+  // - returns to the prevous screen
+  const handleSubmitPress = () => {
+    dispatchSymptom({
+      type: SymptomActions.ADD_SYMPTOM,
+      symptom: {
+        notes,
+        dateTime: dateTimeControl.date,
+        medication: selectedMedication,
+      },
+    });
+    ASsetMedicationList(medicationDropdownList);
+    navigation.goBack();
+  };
 
   // JSX VIEW
   return (
     <View>
       <HeaderText>Notes:</HeaderText>
-      {/* <TextInput multiline autoFocus style={styles.notesInput} /> */}
-      <TextInput multiline style={styles.notesInput} />
+      <TextInput
+        multiline
+        style={styles.notesInput}
+        value={notes}
+        onChangeText={(text) => updateNotes(text)}
+      />
       <DateTimeSelector
         date={dateTimeControl.date}
         onDatePress={() => dispatchDateTimeControl({ type: SHOW_DATE })}
         onTimePress={() => dispatchDateTimeControl({ type: SHOW_TIME })}
       />
       <DropDownInputSelector
-        listItems={MOCK_DROP_DOW_LIST}
-        itemSelectedCallback={() => true}
+        selectedItem={selectedMedication}
+        listItems={medicationDropdownList}
+        itemSelectedCallback={(item) => setSelectedMedication(item.text)}
+        newItemCallback={(item) => {
+          if (
+            medicationDropdownList.filter((value) => value.text === item)
+              .length === 0
+          ) {
+            setMedicationDropDownList(
+              medicationDropdownList.concat([{ text: item }]),
+            );
+          }
+        }}
       />
+      {/* Submit button -- Adds a New Item to patient history */}
+      <TouchableOpacity onPress={handleSubmitPress}>
+        <View style={styles.buttonContainer}>
+          <HeaderText>Submit</HeaderText>
+        </View>
+      </TouchableOpacity>
       {dateTimeControl.show && (
         <DateTimePicker
           timeZoneOffsetInMinutes={0} // IOS Only
@@ -148,6 +186,18 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     margin: 8,
     borderRadius: 3,
+    backgroundColor: 'white',
+    fontSize: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingRight: 8,
+    borderColor: 'royalblue',
+    borderWidth: 5,
+    borderRadius: 15,
+    paddingVertical: 8,
+    margin: 8,
     backgroundColor: 'white',
   },
 });

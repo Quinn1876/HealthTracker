@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   Modal,
+  TextInput,
 } from 'react-native';
 
 import { HeaderText } from '.';
@@ -25,48 +26,83 @@ export const DropDownInputSelector = ({
   newItemCallback,
   selectedItem,
 }) => {
-  const [show, setShow] = React.useState(false);
+  const [showSelectModal, setShowSelectModal] = React.useState(false);
+  const [showNewItemModal, setShowNewItemModal] = React.useState(false);
+  const [newMedicineText, setNewMedicineText] = React.useState('');
 
   const handleItemSelect = (item) => {
-    setShow(false);
+    setShowSelectModal(false);
     itemSelectedCallback(item);
   };
+
+  const handleNewItemPressed = () => {
+    setShowNewItemModal(true);
+  };
+
+  const handleNewItemCreated = () => {
+    newItemCallback(newMedicineText);
+    setShowNewItemModal(false);
+    setNewMedicineText('');
+  };
+
   return (
     <View>
-      {!show ? (
-        <TouchableOpacity onPress={() => setShow(true)}>
-          <View style={styles.buttonContainer}>
-            <HeaderText>{selectedItem || 'Select a Medication'}</HeaderText>
-            <Image source={DownArrow} style={styles.sprite} />
-          </View>
+      <TouchableOpacity onPress={() => setShowSelectModal(true)}>
+        <View style={styles.buttonContainer}>
+          <HeaderText>{selectedItem || 'Select a Medication'}</HeaderText>
+          <Image source={DownArrow} style={styles.sprite} />
+        </View>
+      </TouchableOpacity>
+
+      {/* Select Item Modal */}
+      <Modal visible={showSelectModal} transparent>
+        <ScrollView style={styles.scrollContainer}>
+          {listItems.map((item) => (
+            <ListItem key={item.text} item={item} onSelect={handleItemSelect} />
+          ))}
+          {newItemCallback && (
+            <TouchableOpacity
+              onPress={handleNewItemPressed}
+              style={[styles.listItem, styles.addItemButton]}>
+              <Text style={styles.addItemPlusText}>+</Text>
+              <Text style={styles.listItemText}>Add new Item</Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => setShowSelectModal(false)}>
+          <HeaderText>Close</HeaderText>
         </TouchableOpacity>
-      ) : (
-        <View>
-          <ScrollView style={styles.scrollContainer}>
-            {listItems.map((item) => (
-              <ListItem
-                key={item.text}
-                item={item}
-                onSelect={handleItemSelect}
-              />
-            ))}
-            {newItemCallback && (
-              <TouchableOpacity
-                onPress={newItemCallback}
-                style={[styles.listItem, styles.addItemButton]}>
-                <Text>+</Text>
-                <Text>Add new Item</Text>
-              </TouchableOpacity>
-            )}
-          </ScrollView>
+      </Modal>
+
+      {/* New Item Modal */}
+      <Modal visible={showNewItemModal}>
+        <View style={styles.newMedicineContainer}>
+          <HeaderText>New Medicine:</HeaderText>
+          <TextInput
+            value={newMedicineText}
+            onChangeText={(text) => setNewMedicineText(text)}
+            autoFocus
+            style={styles.notesInput}
+          />
           <TouchableOpacity
-            style={{ ...styles.buttonContainer, ...styles.closeButton }}
-            onPress={() => setShow(false)}>
-            <HeaderText>Close</HeaderText>
+            onPress={handleNewItemCreated}
+            style={[
+              styles.listItem,
+              styles.addItemButton,
+              styles.newMedicineButton,
+            ]}>
+            <Text style={styles.addItemPlusText}>+</Text>
+            <Text style={styles.listItemText}>Add new Item</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowNewItemModal(false)}>
+            <View style={styles.newItemClose}>
+              <HeaderText>Close</HeaderText>
+            </View>
           </TouchableOpacity>
         </View>
-      )}
-      <Modal visible={false} />
+      </Modal>
     </View>
   );
 };
@@ -81,10 +117,7 @@ const ListItem = ({ item, onSelect }) => (
   <TouchableOpacity
     style={styles.listItemContainer}
     onPress={() => onSelect(item)}
-    delayPressIn={5}
-    // delayPressOut={5}
-    // delayLongPress={5}>
-  >
+    delayPressIn={5}>
     <Text style={styles.listItemText}>{item.text}</Text>
   </TouchableOpacity>
 );
@@ -93,11 +126,6 @@ const ListItem = ({ item, onSelect }) => (
 // ListItem's StyleSheet
 const styles = StyleSheet.create({
   scrollContainer: {
-    width: 344,
-    height: 250,
-    position: 'absolute',
-    top: 0,
-    left: 0,
     zIndex: 100,
     backgroundColor: 'white',
     paddingBottom: 16,
@@ -117,16 +145,40 @@ const styles = StyleSheet.create({
     margin: 8,
     backgroundColor: 'white',
   },
-  closeButton: {
-    position: 'absolute',
-    top: 266,
-  },
   sprite: {
     width: 50,
     height: 50,
   },
   addItemButton: {
-    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  addItemPlusText: {
+    fontWeight: 'bold',
+    fontSize: 64,
+    paddingLeft: 16,
+    paddingRight: 32,
+  },
+  newMedicineContainer: {
+    margin: 8,
+  },
+  notesInput: {
+    borderWidth: 3,
+    borderColor: 'black',
+    fontSize: 24,
+  },
+  newMedicineButton: {
+    borderWidth: 3,
+    marginTop: 8,
+    height: 75,
+    backgroundColor: 'chartreuse',
+  },
+  newItemClose: {
+    borderWidth: 3,
+    marginTop: 8,
+    borderRadius: 9,
+    alignItems: 'center',
+    backgroundColor: 'red',
   },
   listItemText: {
     fontSize: 28,

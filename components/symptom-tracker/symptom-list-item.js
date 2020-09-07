@@ -1,11 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export const SymptomListItem = ({ notes, dateTime }) => (
+export const SymptomListItem = ({ notes, dateTime, medication }) => (
   <View style={styles.container}>
     <View>
-      <Text>Notes:</Text>
-      <Text style={styles.note}>{notes}</Text>
+      {!!medication && (
+        <View>
+          <Text>Medication:</Text>
+          <Text>{medication}</Text>
+        </View>
+      )}
+      {!!notes && (
+        <View>
+          <Text>Notes:</Text>
+          <Text style={styles.note}>{notes.toString()}</Text>
+        </View>
+      )}
     </View>
     <View>
       <Text>
